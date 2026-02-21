@@ -39,7 +39,7 @@ def send_telegram_message(message):
     try:
         requests.post(url, json=payload)
     except Exception as e:
-        print(f"❌ 發送失敗: {e}")
+        print(f"Failed: {e}")
 
 def fetch_weather():
     url = "https://api.open-meteo.com/v1/forecast"
@@ -49,9 +49,9 @@ def fetch_weather():
         "hourly": "temperature_2m,windspeed_10m,precipitation",
         "timezone": "Europe/Berlin"
     }
-    start_time = time.time()   # ⬅️ 加這行
+    start_time = time.time()   
     response = requests.get(url, params=params)
-    end_time = time.time()     # ⬅️ 加這行
+    end_time = time.time()     
 
     latency_ms = (end_time - start_time) * 1000
     print(f"Open-Meteo API Latency: {latency_ms:.2f} ms")
@@ -124,7 +124,7 @@ def check_incoming_messages():
     """Receiving Msg from Telegram """
     global last_update_id
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates"
-    params = {"offset": last_update_id + 1, "timeout": 1} # timeout 設短一點避免卡住
+    params = {"offset": last_update_id + 1, "timeout": 1} 
     
     try:
         response = requests.get(url, params=params)
@@ -132,7 +132,7 @@ def check_incoming_messages():
         
         if "result" in data:
             for update in data["result"]:
-                last_update_id = update["update_id"] # 更新 ID
+                last_update_id = update["update_id"] 
                 
                 # 確保是文字訊息
                 if "message" in update and "text" in update["message"]:
@@ -161,13 +161,13 @@ def check_incoming_messages():
                     
                     pipeline_end = time.time()
                     total_latency = (pipeline_end - pipeline_start) * 1000
-                    print(f"⏱️ Total Response Time: {total_latency:.2f} ms")                   
+                    print(f"Total Response Time: {total_latency:.2f} ms")                   
 
                     # 3. 回覆用戶
                     send_telegram_message(f" Gemini:\n{ai_reply}")
 
     except Exception as e:
-        print(f"接收訊息錯誤: {e}")
+        print(f"Error: {e}")
 
 
 # --- 2. 擴充後的行動資料集 (加入情境 Context) ---
@@ -179,7 +179,7 @@ ACTIONS_DATASET =[
         "category": "Driving Safety",
         "user_context": "Driving",
         "situation": "Black Ice Risk",
-        "action": "⚠️ Possible black ice (Temp <= 3°C)! Avoid sudden braking and maintain double distance.",
+        "action": "Possible black ice (Temp <= 3°C)! Avoid sudden braking and maintain double distance.",
         "trigger_condition": lambda t, w, p: t <= 3
     },
     {
@@ -187,7 +187,7 @@ ACTIONS_DATASET =[
         "category": "Driving Visibility",
         "user_context": "Driving",
         "situation": "Heavy Rain",
-        "action": "🌧️ Heavy Rain (>2mm). Turn on headlights and watch out for hydroplaning.",
+        "action": "Heavy Rain (>2mm). Turn on headlights and watch out for hydroplaning.",
         "trigger_condition": lambda t, w, p: p > 2.0
     },
     {
@@ -195,7 +195,7 @@ ACTIONS_DATASET =[
         "category": "Driving Safety",
         "user_context": "Driving",
         "situation": "Snowfall",
-        "action": "❄️ Heavy Snow! Visibility reduced. Turn on low beams/fog lights and increase distance.",
+        "action": "Heavy Snow! Visibility reduced. Turn on low beams/fog lights and increase distance.",
         # 新增：駕駛的大雪警報 (氣溫低於0且有降水)
         "trigger_condition": lambda t, w, p: t <= 0 and p > 0
     },
@@ -204,7 +204,7 @@ ACTIONS_DATASET =[
         "category": "Driving Stability",
         "user_context": "Driving",
         "situation": "Strong Wind",
-        "action": "💨 Strong crosswinds (>40km/h). Hold the steering wheel firmly.",
+        "action": "Strong crosswinds (>40km/h). Hold the steering wheel firmly.",
         "trigger_condition": lambda t, w, p: w >38 #(38-49) 
     },
 
@@ -248,7 +248,7 @@ ACTIONS_DATASET =[
         "category": "Winter Riding",
         "user_context": "Motorcycle / Bicycle",
         "situation": "Snow / Icy Roads",
-        "action": "❄️ Snow detected! Zero traction. Consider walking your bike.",
+        "action": "Snow detected! Zero traction. Consider walking your bike.",
         "trigger_condition": lambda t, w, p: t <= 0 and p > 0
     },
     {
@@ -299,7 +299,7 @@ ACTIONS_DATASET =[
         "category": "Activity Advice",
         "user_context": "Runner/Pedestrian",
         "situation": "Heavy Rain",
-        "action": "🌧️ Heavy Rain (>2mm)! Consider indoor exercises or treadmill today.",
+        "action": "Heavy Rain (>2mm)! Consider indoor exercises or treadmill today.",
         # 新增：跑者的大雨警報 (建議改室內)
         "trigger_condition": lambda t, w, p: p > 2.0 and t > 0
     },
@@ -334,7 +334,7 @@ ACTIONS_DATASET =[
         "category": "Heatwave Alert",
         "user_context": "General Public",
         "situation": "Extreme Heat",
-        "action": "🥵 Heatwave Alert (>30°C). Stay hydrated and avoid direct sun.",
+        "action": "Heatwave Alert (>30°C). Stay hydrated and avoid direct sun.",
         "trigger_condition": lambda t, w, p: t > 30
     }
 ]
@@ -365,9 +365,9 @@ def save_events_to_file(all_events, filename="weather_events.json"):
 
 # --- 4. 檢查邏輯與通知 ---
 
-# ==========================================
+
 # 6. 定時排程工作 (這段是新的，用來取代 monitor_weather_continuously)
-# ==========================================
+
 def check_weather_alert_job():
     """排程專用的天氣檢查"""
     print(f"\n[{datetime.now()}] Starting Scheduled Weather Alerts...")
@@ -384,21 +384,21 @@ def check_weather_alert_job():
     p =  hourly["precipitation"][current_hour]
     
     # 3. 偵測有無事件
-    # 注意：這裡時間字串我用 datetime.now 取代 "Now" 讓它更準確
+    # 這裡時間字串用 datetime.now 取代 "Now" 讓它更準確
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M")
     events = detect_events(current_time, t, w, p)
     
     if events:
-        msg = f"🚨 **Scheduled Weather Alerts** (T:{t}°C, Rain:{p}mm)\n"
+        msg = f"Scheduled Weather Alerts (T:{t}°C, Rain:{p}mm)\n"
         for e in events:
             msg += f"【{e['context']}】 {e['action']}\n"
         send_telegram_message(msg)
     else:
         print("Weather conditions are normal. No alerts need to be sent")
 
-# ==========================================
+
 # 7. 主程式循環 (程式的入口)
-# ==========================================
+
 def test_rule_accuracy():
     test_cases = [
         {"t": -1, "w": 10, "p": 0, "expected": "Black Ice Risk"},
@@ -420,10 +420,10 @@ def test_rule_accuracy():
             correct += 1
 
     accuracy = correct / len(test_cases)
-    print(f"🎯 Rule Accuracy: {accuracy * 100:.2f}%")
+    print(f"Rule Accuracy: {accuracy * 100:.2f}%")
 
 def test_boundary_conditions():
-    print("\n🔍 Running Boundary Tests...\n")
+    print("\n Running Boundary Tests...\n")
 
     test_cases = [
         {"temp": 3.1, "expected": False},
@@ -470,8 +470,8 @@ if __name__ == "__main__":
             time.sleep(1)
             
         except KeyboardInterrupt:
-            print("🛑 程式已停止")
+            print("The system stop")
             break
         except Exception as e:
-            print(f"⚠️ 發生錯誤，系統自動重啟: {e}")
+            print(f"Forbidden the system reset {e}")
             time.sleep(5)
