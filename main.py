@@ -4,10 +4,14 @@ import schedule
 import json
 from datetime import datetime
 from google import genai
+import os
+from dotenv import load_dotenv
 
-TELEGRAM_BOT_TOKEN = "8570348253:AAHIwGgrBXmFSztkx2ttrAa481w-WtaI7mo"
+load_dotenv()
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = 8494809982
-GEMINI_API_KEY = "AIzaSyB3NXgId8MqhY3m8ZqoIHI_aB1CuLR-v80"  
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  
 
 last_update_id = 0
 
