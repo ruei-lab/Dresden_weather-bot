@@ -1,4 +1,7 @@
 # Dresden_weather-bot
+## AI Usage Disclosure
+This project uses generative AI (Google Gemini) for reasoning and response generation.
+All system design, safety constraints, and integration logic were implemented and validated by the author.
 
 Project Overview
 This repository contains the code and dataset for the Applied AI final project. It is a Telegram-based AI assistant designed to provide personalized, context-aware weather safety advice. To overcome the hallucination risks of pure Large Language Models in critical safety scenarios, this system implements a Two-Stage Hybrid Architecture. It combines a deterministic rule-based engine with Google's Gemini LLM to ensure 100% trigger accuracy for life-threatening conditions like black ice or high winds.
